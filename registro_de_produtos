@@ -1,0 +1,77 @@
+# Vou tentar reduzir, usei o for loop, if e while para não fugir muito do que eu já sei mexer
+#o elif da linha 72 está dando erro no meu vs code
+
+import sqlite3
+
+def cadastrar_produto(nome, preco, quantidade):
+    # Conectar ao banco de dados 
+    conn = sqlite3.connect('produtos.db')
+
+    cursor = conn.cursor()#cursor
+
+    # Criar a tabela de produtos se não existir
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS produtos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            preco REAL NOT NULL,
+            quantidade INTEGER NOT NULL,
+            data_cadastro DATE DEFAULT CURRENT_DATE
+        )
+    ''')
+
+    # adicionar dados no banco de dados
+    cursor.execute("INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)",
+                   (nome, preco, quantidade))
+
+    # salvar as alterações
+    conn.commit()
+
+   
+    conn.close()
+
+def exibir_produtos():
+    
+    conn = sqlite3.connect('produtos.db')
+    cursor = conn.cursor()
+
+   
+    cursor.execute("SELECT nome, preco, quantidade FROM produtos")
+    produtos = cursor.fetchall()
+
+    
+    conn.close()
+
+    return produtos
+
+# Função para exibir os produtos
+def visualizar_produtos():
+    lista_produtos = exibir_produtos()
+
+
+    print("Produtos Cadastrados:")
+    for produto in lista_produtos:
+        print(f'Nome: {produto[0]}, Preço: {produto[1]}, Quantidade: {produto[2]}')
+
+# interface para perguntar ao usuário se ele quer cadastrar ou visualizar produtos
+while True:
+    escolha = input("Escolha uma opção (cadastrar/c, visualizar/v, sair/s): ")
+
+    if escolha.lower() == 'cadastrar' or escolha.lower() == 'c':
+        # inciar cadastro
+        nome_produto = input("Nome do Produto: ")
+        preco_produto = float(input("Preço do Produto: "))
+        quantidade_produto = int(input("Quantidade do Produto: "))
+
+        # Chamando a função que vai cadastrar o produto
+        cadastrar_produto(nome_produto, preco_produto, quantidade_produto)
+        print("Produto cadastrado com sucesso!")
+
+    elif escolha.lower() == 'visualizar' or escolha.lower() == 'v':
+        # visualizar os produtos
+
+    elif escolha.lower() == 'sair' or escolha.lower() == 's':
+        break#oiii gabriel
+
+    else:
+        print("Opção inválida. Tente novamente.")
