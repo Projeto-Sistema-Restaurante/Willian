@@ -1,0 +1,76 @@
+import sqlite3
+
+#função para registrar vendas 
+
+def registro_venda(numero_pedido, cliente, mesa, metodo_pagamento, itens, detalhes_pedido,metodo_entrega,total_pedido):
+    #banco de dados
+    conn = sqlite3.connect('pedidos.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        INSERT INTO vendas (numero_pedido, cliente, mesa, metodo_pagamento, itens, detalhes_pedido, metodo_pagamento, total_pedido)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)           
+        ''', (numero_pedido, cliente, mesa, metodo_pagamento, itens, detalhes_pedido,metodo_entrega,total_pedido))
+    
+    conn.comit()#salvando
+
+    conn.close()#fechando conexão
+
+#função para criação da tabela
+def tabela_registro_vendas():
+    conn = sqlite3.connect('pedidos.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+         CREATE TABABLE IF NOT EXISTS vendas (   
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            numero_pedido INTEGER NOT NULL,
+            cliente TEXT,
+            mesa INTEGER,
+            metodo_pagamento TEXT,
+            metodo_entrega TEXT,
+            total_pedido REAL,
+            data_venda DATE DEFAULT CURRENT_DATE
+    )
+
+    ''')
+    conn.comit()
+    conn.close()
+
+
+#interação para o usuario
+while True:
+        print("\n### Menu ###")
+        print("1. Cadastrar Venda")
+        print("2. Visualizar Vendas")
+        print("3. Sair")
+
+        opcao = input("Escolha uma opção: ")
+
+        if opcao == '1':
+            # Coletar dados para o registro
+            numero_pedido = int(input("Número do Pedido: "))
+            cliente = input("Nome do Cliente: ")
+            mesa = int(input("Número da Mesa: "))
+            metodo_pagamento = input("Método de Pagamento: ")
+            itens = input("Itens do Pedido: ")
+            detalhes_pedido = input("Detalhes do Pedido: ")
+            metodo_entrega = input("Método de Entrega: ")
+            total_pedido = float(input("Total do Pedido: "))
+
+            # Registrar a venda
+            registro_venda(numero_pedido, cliente, mesa, metodo_pagamento, itens, detalhes_pedido, metodo_entrega, total_pedido)
+
+        elif opcao == '2':
+            # Visualizar todas as vendas
+            exibir_vendas()
+
+        elif opcao == '3':
+            break
+
+        else:
+            print("Opção inválida. Tente novamente.")
+
+if __name__ == "__main__":
+    tabela_registro_vendas()
+    
